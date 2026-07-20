@@ -14,6 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Import Routes
 const certificateRoutes = require('./routes/certificateRoutes');
+const sequelize = require('./config/db');
 
 // Basic route
 app.get('/', (req, res) => {
@@ -26,6 +27,11 @@ app.use('/api/certificates', certificateRoutes);
 // Port
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+sequelize.sync().then(() => {
+  console.log('Database synced successfully');
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}).catch(err => {
+  console.error('Failed to sync db: ' + err.message);
 });
