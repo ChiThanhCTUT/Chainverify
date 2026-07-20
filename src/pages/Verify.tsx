@@ -15,7 +15,7 @@ import {
 import { Certificate } from '../types';
 import { STITCH_UNIVERSITY_LOGO } from '../data';
 import QRCodeGenerator from '../components/QRCodeGenerator';
-import { verifyCertificateOnChain } from '../services/blockchainService';
+import { getCertificateStatus, verifyCertificateOnChain } from '../services/blockchainService';
 
 interface VerifyProps {
   certificates: Certificate[];
@@ -61,17 +61,16 @@ export default function Verify({ certificates }: VerifyProps) {
       if (found) {
         setVerifiedCert(found);
       } else {
-        // Thử kiểm tra trên Blockchain thực tế (Module 18 CÔNG)
-        const onChainCert = await verifyCertificateOnChain(trimmed);
-        if (onChainCert) {
+        const statusResult = await getCertificateStatus(trimmed);
+        if (statusResult.exists && statusResult.data) {
           setVerifiedCert({
             id: trimmed,
-            recipientName: onChainCert.recipientName,
-            courseProgram: onChainCert.courseProgram,
-            issueDate: onChainCert.issueDate,
-            status: onChainCert.isValid ? 'Valid' : 'Revoked',
+            recipientName: statusResult.data.recipientName,
+            courseProgram: statusResult.data.courseProgram,
+            issueDate: statusResult.data.issueDate,
+            status: statusResult.isValid ? 'Valid' : 'Revoked',
             txHash: 'On-chain Smart Contract',
-            checksum: onChainCert.checksum,
+            checksum: statusResult.data.checksum,
             issuerName: 'Trường Đại học Stitch',
             issuerLogo: STITCH_UNIVERSITY_LOGO,
             timestamp: new Date().toUTCString(),
