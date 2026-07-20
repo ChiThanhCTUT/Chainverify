@@ -1,5 +1,5 @@
 // Controller cho các API liên quan đến Chứng chỉ
-const pool = require('../config/db');
+const Certificate = require('../models/Certificate');
 const crypto = require('crypto');
 
 // ==========================================
@@ -11,17 +11,11 @@ exports.createCertificate = async (req, res) => {
   try {
     const { id, recipientName, courseProgram, issueDate, status, txHash, checksum, issuerName, issuerLogo } = req.body;
     
-    const query = `
-      INSERT INTO certificates 
-      (id, recipientName, courseProgram, issueDate, status, txHash, checksum, issuerName, issuerLogo) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    
-    await pool.query(query, [
-      id, recipientName, courseProgram, issueDate, status || 'Pending', txHash, checksum, issuerName, issuerLogo
-    ]);
+    const newCert = await Certificate.create({
+      id, recipientName, courseProgram, issueDate, status: status || 'Pending', txHash, checksum, issuerName, issuerLogo
+    });
 
-    res.status(201).json({ success: true, message: 'Tạo chứng chỉ thành công', data: { id } });
+    res.status(201).json({ success: true, message: 'Tạo chứng chỉ thành công', data: newCert });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, error: 'Lỗi server khi tạo chứng chỉ' });
@@ -31,7 +25,9 @@ exports.createCertificate = async (req, res) => {
 // 2. READ ALL - Lấy danh sách chứng chỉ (có hỗ trợ phân trang/tìm kiếm cơ bản)
 exports.getAllCertificates = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM certificates ORDER BY timestamp DESC');
+    const rows = await Certificate.findAll({
+      order: [['createdAt', 'DESC']]
+    });
     res.json({ success: true, data: rows });
   } catch (error) {
     console.error(error);
@@ -43,13 +39,13 @@ exports.getAllCertificates = async (req, res) => {
 exports.getCertificateById = async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await pool.query('SELECT * FROM certificates WHERE id = ?', [id]);
+    const cert = await Certificate.findByPk(id);
     
-    if (rows.length === 0) {
+    if (!cert) {
       return res.status(404).json({ success: false, error: 'Không tìm thấy chứng chỉ' });
     }
     
-    res.json({ success: true, data: rows[0] });
+    res.json({ success: true, data: cert });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, error: 'Lỗi server khi lấy chi tiết chứng chỉ' });
@@ -62,23 +58,19 @@ exports.updateCertificate = async (req, res) => {
     const { id } = req.params;
     const { status, txHash } = req.body;
     
-    // Cập nhật linh hoạt các trường được gửi lên
-    let updateFields = [];
-    let queryParams = [];
+    let updateFields = {};
+    if (status) updateFields.status = status;
+    if (txHash) updateFields.txHash = txHash;
     
-    if (status) { updateFields.push('status = ?'); queryParams.push(status); }
-    if (txHash) { updateFields.push('txHash = ?'); queryParams.push(txHash); }
-    
-    if (updateFields.length === 0) {
+    if (Object.keys(updateFields).length === 0) {
       return res.status(400).json({ success: false, error: 'Không có dữ liệu cập nhật' });
     }
     
-    queryParams.push(id);
-    const query = `UPDATE certificates SET ${updateFields.join(', ')} WHERE id = ?`;
+    const [updatedRowsCount] = await Certificate.update(updateFields, {
+      where: { id }
+    });
     
-    const [result] = await pool.query(query, queryParams);
-    
-    if (result.affectedRows === 0) {
+    if (updatedRowsCount === 0) {
       return res.status(404).json({ success: false, error: 'Không tìm thấy chứng chỉ để cập nhật' });
     }
     
@@ -93,9 +85,11 @@ exports.updateCertificate = async (req, res) => {
 exports.deleteCertificate = async (req, res) => {
   try {
     const { id } = req.params;
-    const [result] = await pool.query('DELETE FROM certificates WHERE id = ?', [id]);
+    const deletedRowsCount = await Certificate.destroy({
+      where: { id }
+    });
     
-    if (result.affectedRows === 0) {
+    if (deletedRowsCount === 0) {
       return res.status(404).json({ success: false, error: 'Không tìm thấy chứng chỉ để xóa' });
     }
     
@@ -127,7 +121,8 @@ exports.uploadCertificatePDF = async (req, res) => {
       data: {
         pdfUrl: 'https://example.com/mock-pdf-url.pdf', // Cần thay bằng Cloudinary/S3 thực tế
         sha256Hash: `0x${sha256Hash}`,
-        checksum: `0x${sha256Hash}`
+        checksum: `0x${sha256Hash}`,
+        fileName: req.file.originalname
       }
     });
   } catch (error) {
@@ -139,19 +134,23 @@ exports.uploadCertificatePDF = async (req, res) => {
 // getAdminStatistics() - Lấy số liệu thống kê cho trang quản trị
 exports.getAdminStatistics = async (req, res) => {
   try {
-    // Lấy số liệu thực tế từ MySQL
-    const [totalRows] = await pool.query('SELECT COUNT(*) as total FROM certificates');
-    const [verifiedRows] = await pool.query("SELECT COUNT(*) as total FROM certificates WHERE status = 'Valid'");
+    const totalIssued = await Certificate.count();
+    const totalVerified = await Certificate.count({ where: { status: 'Valid' } });
+    const revokedCount = await Certificate.count({ where: { status: 'Revoked' } });
     
-    // Giả lập số sinh viên active (hoặc đếm số lượng recipientName distinct)
-    const [studentRows] = await pool.query('SELECT COUNT(DISTINCT recipientName) as total FROM certificates');
+    // Giả lập số sinh viên active bằng cách đếm số lượng recipientName distinct
+    const activeStudents = await Certificate.count({
+      distinct: true,
+      col: 'recipientName'
+    });
 
     res.json({
       success: true,
       data: {
-        totalIssued: totalRows[0].total,
-        totalVerified: verifiedRows[0].total,
-        activeStudents: studentRows[0].total
+        totalIssued,
+        totalVerified,
+        activeStudents,
+        revokedCount
       }
     });
   } catch (error) {
