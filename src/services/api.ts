@@ -36,24 +36,10 @@ export interface UploadPDFResponse {
 }
 
 export const uploadCertificatePDF = async (file: File): Promise<UploadPDFResponse> => {
-  /* [BIN: Khi backend sẵn sàng, bỏ comment đoạn dưới]:
   const formData = new FormData();
-  formData.append('pdfFile', file);
+  formData.append('file', file);
   return await api.post('/certificates/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
-  });
-  */
-  
-  // Mock tạm thời cho THANH test UI khi BIN đang build backend:
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        pdfUrl: URL.createObjectURL(file),
-        sha256Hash: '0x8f2a64c9e4b7a1d3f5e8c2a9b6d4f1e7c3a5b8d2f0e4a6c9b7d5f3e1a8c2b4d6f9',
-        checksum: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-        fileName: file.name,
-      });
-    }, 1200);
   });
 };
 
@@ -68,26 +54,14 @@ export interface AdminStatsResponse {
 }
 
 export const getAdminStatistics = async (): Promise<AdminStatsResponse> => {
-  /* [BIN: Khi backend sẵn sàng, bỏ comment]:
-  return await api.get('/admin/stats');
-  */
-  return {
-    totalIssued: 128,
-    totalVerified: 1450,
-    activeStudents: 85,
-    revokedCount: 2,
-  };
+  return await api.get('/certificates/admin/statistics');
 };
 
 // ==========================================
 // [BIN TODO 3]: API Lấy danh sách chứng chỉ (từ MySQL của BIN hoặc phối hợp on-chain)
 // ==========================================
 export const getCertificatesFromBackend = async (): Promise<Certificate[]> => {
-  /* [BIN: Khi backend sẵn sàng]:
   return await api.get('/certificates');
-  */
-  const cached = localStorage.getItem('chainverify_certs');
-  return cached ? JSON.parse(cached) : [];
 };
 
 export default api;
