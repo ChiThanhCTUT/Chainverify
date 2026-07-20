@@ -5,7 +5,7 @@
  *   2. SUPPORTED_CHAIN_ID: ID của mạng lưới (11155111 cho Sepolia, 31337 cho Hardhat Local)
  */
 
-export const CONTRACT_ADDRESS = "0x1234567890abcdef1234567890abcdef12345678"; // [CÔNG: Điền địa chỉ Smart Contract ở đây]
+export const CONTRACT_ADDRESS: string = "0x1234567890abcdef1234567890abcdef12345678"; // [CÔNG: Điền địa chỉ Smart Contract ở đây]
 
 export const SUPPORTED_CHAIN_ID = 11155111; // 11155111 (Sepolia Testnet) hoặc 31337 (Hardhat Local)
 export const RPC_URL = "https://rpc.sepolia.org";
