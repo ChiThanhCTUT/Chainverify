@@ -1,0 +1,6 @@
+{
+  "name": "ChainVerify",
+  "description": "Hệ thống xác minh văn bằng chứng chỉ học thuật và nghề nghiệp bảo mật trên nền tảng Blockchain",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

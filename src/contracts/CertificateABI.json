@@ -1,0 +1,35 @@
+[
+  {
+    "inputs": [
+      { "internalType": "string", "name": "_certId", "type": "string" },
+      { "internalType": "string", "name": "_recipientName", "type": "string" },
+      { "internalType": "string", "name": "_courseProgram", "type": "string" },
+      { "internalType": "string", "name": "_checksum", "type": "string" }
+    ],
+    "name": "issueCertificate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "string", "name": "_certId", "type": "string" }],
+    "name": "verifyCertificate",
+    "outputs": [
+      { "internalType": "string", "name": "recipientName", "type": "string" },
+      { "internalType": "string", "name": "courseProgram", "type": "string" },
+      { "internalType": "string", "name": "issueDate", "type": "string" },
+      { "internalType": "string", "name": "checksum", "type": "string" },
+      { "internalType": "bool", "name": "isValid", "type": "bool" },
+      { "internalType": "address", "name": "issuer", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "string", "name": "_certId", "type": "string" }],
+    "name": "revokeCertificate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]
