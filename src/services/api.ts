@@ -38,7 +38,7 @@ export interface UploadPDFResponse {
 export const uploadCertificatePDF = async (file: File): Promise<UploadPDFResponse> => {
   const formData = new FormData();
   formData.append('file', file);
-  return await api.post('/certificates/upload', formData, {
+  return await api.post('/upload', formData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 };
