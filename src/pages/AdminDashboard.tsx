@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   School,
   Award,
@@ -14,7 +14,7 @@ import { Certificate } from '../types';
 import { ADMIN_PROFILE_IMAGE, STITCH_UNIVERSITY_LOGO } from '../data';
 import { generateRandomHash, generateRandomChecksum } from '../utils/crypto';
 import CertificateCard from '../components/CertificateCard';
-import { uploadCertificatePDF } from '../services/api';
+import { uploadCertificatePDF, getAdminStatistics, AdminStatsResponse } from '../services/api';
 import { issueCertificateOnChain } from '../services/blockchainService';
 
 interface AdminDashboardProps {
@@ -34,6 +34,19 @@ export default function AdminDashboard({
   const [searchTerm, setSearchTerm] = useState('');
   const [isIssuing, setIsIssuing] = useState(false);
   const [issueSuccessMsg, setIssueSuccessMsg] = useState('');
+  const [stats, setStats] = useState<AdminStatsResponse | null>(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await getAdminStatistics();
+        setStats(data);
+      } catch (err) {
+        console.error('Lỗi khi lấy dữ liệu thống kê:', err);
+      }
+    };
+    fetchStats();
+  }, []);
 
   // Form state cấp phát mới
   const [studentId, setStudentId] = useState('');
@@ -167,7 +180,9 @@ export default function AdminDashboard({
                 <span className="text-xs font-bold uppercase">Tổng văn bằng đã cấp</span>
                 <Award className="w-5 h-5 text-[#001e40]" />
               </div>
-              <div className="text-3xl font-serif font-bold text-[#001e40]">{certificates.length}</div>
+              <div className="text-3xl font-serif font-bold text-[#001e40]">
+                {stats?.totalIssued !== undefined ? stats.totalIssued : certificates.length}
+              </div>
               <p className="text-[11px] text-emerald-600 font-semibold mt-2">↑ 12% so với học kỳ trước</p>
             </div>
 
@@ -176,7 +191,9 @@ export default function AdminDashboard({
                 <span className="text-xs font-bold uppercase">Lượt xác minh công khai</span>
                 <Shield className="w-5 h-5 text-emerald-600" />
               </div>
-              <div className="text-3xl font-serif font-bold text-[#001e40]">1,452</div>
+              <div className="text-3xl font-serif font-bold text-[#001e40]">
+                {stats?.totalVerified !== undefined ? stats.totalVerified.toLocaleString() : '1,452'}
+              </div>
               <p className="text-[11px] text-emerald-600 font-semibold mt-2">Bảo mật tuyệt đối qua Smart Contract</p>
             </div>
 
@@ -185,7 +202,9 @@ export default function AdminDashboard({
                 <span className="text-xs font-bold uppercase">Sinh viên có hồ sơ</span>
                 <Users className="w-5 h-5 text-blue-600" />
               </div>
-              <div className="text-3xl font-serif font-bold text-[#001e40]">85</div>
+              <div className="text-3xl font-serif font-bold text-[#001e40]">
+                {stats?.activeStudents !== undefined ? stats.activeStudents : '85'}
+              </div>
               <p className="text-[11px] text-[#505f76] font-semibold mt-2">Đang đồng bộ với cơ sở dữ liệu MySQL</p>
             </div>
           </div>
