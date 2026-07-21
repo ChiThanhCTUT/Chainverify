@@ -1,8 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
-import { ethers } from 'ethers';
+import { BrowserProvider, getAddress } from 'ethers';
 
 const SEPOLIA_CHAIN_ID = 11155111;
-const SEPOLIA_CHAIN_ID_HEX = ethers.utils.hexValue(SEPOLIA_CHAIN_ID);
+const SEPOLIA_CHAIN_ID_HEX = '0x' + SEPOLIA_CHAIN_ID.toString(16);
 
 function getEthereumProvider() {
   if (typeof window !== 'undefined' && (window as any).ethereum) {
@@ -29,18 +29,18 @@ export function useWallet() {
     }
 
     try {
-      const provider = new ethers.providers.Web3Provider(ethereum, 'any');
+      const provider = new BrowserProvider(ethereum, 'any');
       const accounts: string[] = await provider.send('eth_accounts', []);
       const network = await provider.getNetwork();
 
-      if (network.chainId !== SEPOLIA_CHAIN_ID) {
+      if (network.chainId !== BigInt(SEPOLIA_CHAIN_ID)) {
         setError('Vui lòng chuyển MetaMask sang mạng Sepolia.');
         setIsConnected(false);
         return;
       }
 
       if (accounts.length > 0) {
-        setAccount(ethers.utils.getAddress(accounts[0]));
+        setAccount(getAddress(accounts[0]));
         setIsConnected(true);
         setError(null);
       } else {
@@ -62,11 +62,11 @@ export function useWallet() {
     }
 
     try {
-      const provider = new ethers.providers.Web3Provider(ethereum, 'any');
+      const provider = new BrowserProvider(ethereum, 'any');
 
       // Nếu không ở Sepolia, cố gắng yêu cầu MetaMask chuyển mạng
       const network = await provider.getNetwork();
-      if (network.chainId !== SEPOLIA_CHAIN_ID) {
+      if (network.chainId !== BigInt(SEPOLIA_CHAIN_ID)) {
         try {
           await (ethereum as any).request({
             method: 'wallet_switchEthereumChain',
@@ -91,7 +91,7 @@ export function useWallet() {
       // Yêu cầu cấp quyền truy cập tài khoản
       const accounts: string[] = await provider.send('eth_requestAccounts', []);
       if (accounts.length > 0) {
-        setAccount(ethers.utils.getAddress(accounts[0]));
+        setAccount(getAddress(accounts[0]));
         setIsConnected(true);
         setError(null);
       }
@@ -116,7 +116,7 @@ export function useWallet() {
 
     const handleAccountsChanged = (accounts: string[]) => {
       if (accounts.length > 0) {
-        setAccount(ethers.utils.getAddress(accounts[0]));
+        setAccount(getAddress(accounts[0]));
         setIsConnected(true);
         setError(null);
       } else {
