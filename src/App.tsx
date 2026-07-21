@@ -19,7 +19,7 @@ import { Certificate } from './types';
 import { INITIAL_CERTIFICATES } from './data';
 
 export default function App() {
-  const { account, isConnected, connectWallet } = useWallet();
+  const { account, isConnected, connectWallet, error } = useWallet();
   const [certificates, setCertificates] = useState<Certificate[]>([]);
 
   // Khởi tạo và đồng bộ dữ liệu chứng chỉ (từ localStorage hoặc sau này từ API của BIN)
@@ -82,6 +82,7 @@ export default function App() {
                   isConnected={isConnected}
                   account={account}
                   onConnectWallet={connectWallet}
+                  error={error}
                 />
               }
             />

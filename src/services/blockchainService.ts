@@ -1,4 +1,4 @@
-import { BrowserProvider, Contract } from 'ethers';
+import { Contract, ethers } from 'ethers';
 import CertificateABI from '../contracts/CertificateABI.json';
 import { CONTRACT_ADDRESS, SUPPORTED_CHAIN_ID, NETWORK_NAMES } from '../contracts/config';
 import { INITIAL_CERTIFICATES } from '../data';
@@ -22,7 +22,7 @@ const isContractAddressConfigured = () => {
 };
 
 // Kiểm tra mạng lưới và yêu cầu chuyển sang Sepolia/Localhost nếu sai mạng
-export const checkNetworkAndSwitch = async (provider: BrowserProvider): Promise<boolean> => {
+export const checkNetworkAndSwitch = async (provider: ethers.providers.Web3Provider): Promise<boolean> => {
   try {
     const network = await provider.getNetwork();
     const currentChainId = Number(network.chainId);
@@ -65,12 +65,12 @@ export const getContractInstance = async (withSigner = false): Promise<Contract 
   }
 
   try {
-    const provider = new BrowserProvider((window as any).ethereum);
+    const provider = new ethers.providers.Web3Provider((window as any).ethereum, 'any');
     const networkOk = await checkNetworkAndSwitch(provider);
     if (!networkOk) return null;
 
     if (withSigner) {
-      const signer = await provider.getSigner();
+      const signer = provider.getSigner();
       return new Contract(CONTRACT_ADDRESS, CertificateABI, signer);
     }
     return new Contract(CONTRACT_ADDRESS, CertificateABI, provider);

@@ -6,9 +6,10 @@ interface LoginProps {
   isConnected: boolean;
   account: string | null;
   onConnectWallet: () => void;
+  error?: string | null;
 }
 
-export default function Login({ isConnected, account, onConnectWallet }: LoginProps) {
+export default function Login({ isConnected, account, onConnectWallet, error }: LoginProps) {
   const navigate = useNavigate();
 
   return (
@@ -54,6 +55,11 @@ export default function Login({ isConnected, account, onConnectWallet }: LoginPr
         </button>
       )}
 
+      {error && (
+        <div className="mt-4 p-3 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-sm">
+          {error}
+        </div>
+      )}
       <div className="mt-8 pt-6 border-t border-[#f0f1f5] text-[11px] text-[#737780]">
         Mọi giao dịch cấp phát văn bằng đều được ký số bảo mật bằng mạng lưới Blockchain Sepolia.
       </div>

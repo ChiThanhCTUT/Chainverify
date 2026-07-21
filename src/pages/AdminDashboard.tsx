@@ -11,6 +11,7 @@ import {
   Users,
 } from 'lucide-react';
 import { Certificate } from '../types';
+import { CONTRACT_ADDRESS } from '../contracts/config';
 import { ADMIN_PROFILE_IMAGE, STITCH_UNIVERSITY_LOGO } from '../data';
 import { generateRandomHash, generateRandomChecksum } from '../utils/crypto';
 import CertificateCard from '../components/CertificateCard';
@@ -48,6 +49,12 @@ export default function AdminDashboard({
   const handleIssueCertificate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!studentId || !studentName) return;
+
+    // Kiểm tra xem CONTRACT_ADDRESS đã được cấu hình chưa
+    if (!CONTRACT_ADDRESS || CONTRACT_ADDRESS === '0x1234567890abcdef1234567890abcdef12345678') {
+      setIssueSuccessMsg('CONTRACT_ADDRESS chưa được cấu hình. Vui lòng deploy Smart Contract và dán địa chỉ vào src/contracts/config.ts trước khi ký giao dịch.');
+      return;
+    }
 
     setIsIssuing(true);
     setIssueSuccessMsg('');
