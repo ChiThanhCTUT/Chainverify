@@ -9,12 +9,12 @@ if (sepoliaKey && !sepoliaKey.startsWith('0x')) {
   sepoliaKey = `0x${sepoliaKey}`;
 }
 
-if (!sepoliaUrl) {
-  throw new Error('Missing SEPOLIA_RPC_URL or VITE_RPC_URL in environment variables.');
+if (!sepoliaUrl && process.argv.includes('sepolia')) {
+  console.warn('⚠️ Missing SEPOLIA_RPC_URL in environment variables when deploying to Sepolia.');
 }
 
-if (!sepoliaKey) {
-  throw new Error('Missing PRIVATE_KEY or VITE_PRIVATE_KEY in environment variables.');
+if (!sepoliaKey && process.argv.includes('sepolia')) {
+  console.warn('⚠️ Missing PRIVATE_KEY in environment variables when deploying to Sepolia.');
 }
 
 /** @type {import('hardhat/config').HardhatUserConfig} */
