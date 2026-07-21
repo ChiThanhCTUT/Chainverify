@@ -1,8 +1,36 @@
 /**
- * Tiện ích băm mã và xử lý mật mã giả lập cho Frontend
- * - Khi BIN (Backend) làm xong Module 16 (Sinh SHA256 cho file PDF), mã hash thực tế sẽ do API Backend trả về.
- * - Khi CÔNG (Blockchain) làm xong Module 18 (Xác minh trên Smart Contract), hash sẽ được đối chiếu on-chain.
+ * [THANH & CÔNG - MODULE 18 COMPLETED]: Tiện ích băm mã và xử lý mật mã cho Frontend
+ * - Tích hợp Web Crypto API (crypto.subtle) của trình duyệt để băm SHA-256 thực sự tệp tin PDF hoặc chuỗi văn bản.
+ * - Hỗ trợ kiểm tra định dạng Hash, sinh Hash giả lập khi test chưa có file gốc.
  */
+
+/**
+ * [STT 35]: Tính toán mã băm SHA-256 thực tế của một tệp tin (file PDF gốc) ngay trên trình duyệt
+ * - Đảm bảo tính riêng tư: File không gửi đi đâu mà được băm ngay tại máy client bằng bộ xử lý mật mã của trình duyệt.
+ */
+export const calculateFileSHA256 = async (file: File): Promise<string> => {
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const hashBuffer = await window.crypto.subtle.digest('SHA-256', arrayBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+  } catch (err) {
+    console.error('Lỗi tính băm SHA-256 file:', err);
+    throw new Error('Không thể tính toán mã băm mật mã của tệp tin này.');
+  }
+};
+
+/**
+ * Tính toán mã băm SHA-256 của một chuỗi ký tự (String)
+ */
+export const calculateTextSHA256 = async (text: string): Promise<string> => {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(text);
+  const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+};
 
 export const generateRandomHash = (): string => {
   const chars = '0123456789abcdef';
