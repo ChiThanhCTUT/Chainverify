@@ -17,23 +17,30 @@ import AdminDashboard from './pages/AdminDashboard';
 import { useWallet } from './hooks/useWallet';
 import { Certificate } from './types';
 import { INITIAL_CERTIFICATES } from './data';
+import { getCertificatesFromBackend } from './services/api';
 
 export default function App() {
   const { account, isConnected, connectWallet, error } = useWallet();
   const [certificates, setCertificates] = useState<Certificate[]>([]);
 
-  // Khởi tạo và đồng bộ dữ liệu chứng chỉ (từ localStorage hoặc sau này từ API của BIN)
+  // Khởi tạo và đồng bộ dữ liệu chứng chỉ từ MySQL Database (Backend API port 5000)
   useEffect(() => {
-    const cached = localStorage.getItem('chainverify_certs');
-    if (cached) {
-      try {
-        setCertificates(JSON.parse(cached));
-      } catch (e) {
-        setCertificates(INITIAL_CERTIFICATES);
+    getCertificatesFromBackend().then((apiCerts) => {
+      if (apiCerts && apiCerts.length > 0) {
+        setCertificates(apiCerts);
+      } else {
+        const cached = localStorage.getItem('chainverify_certs');
+        if (cached) {
+          try {
+            setCertificates(JSON.parse(cached));
+          } catch (e) {
+            setCertificates(INITIAL_CERTIFICATES);
+          }
+        } else {
+          setCertificates(INITIAL_CERTIFICATES);
+        }
       }
-    } else {
-      setCertificates(INITIAL_CERTIFICATES);
-    }
+    });
   }, []);
 
   // Hàm lưu và cập nhật trạng thái văn bằng (chia sẻ cho cả nhóm)

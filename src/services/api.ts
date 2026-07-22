@@ -101,10 +101,24 @@ export const getAdminStatistics = async (): Promise<AdminStatsResponse> => {
 export const getCertificatesFromBackend = async (): Promise<Certificate[]> => {
   try {
     const res: any = await api.get('/certificates');
-    const payload = res?.data || res;
-    return Array.isArray(payload) ? payload : [];
+    const list = res?.data || (Array.isArray(res) ? res : []);
+    if (Array.isArray(list) && list.length > 0) {
+      return list.map((item: any) => ({
+        id: item.id,
+        recipientName: item.recipientName,
+        courseProgram: item.courseProgram,
+        issueDate: item.issueDate ? new Date(item.issueDate).toLocaleDateString('vi-VN') : item.issueDate,
+        status: item.status || 'Pending',
+        txHash: item.txHash || '',
+        checksum: item.checksum || '',
+        issuerName: item.issuerName || 'Trường Đại học Cần Thơ (CTU)',
+        issuerLogo: item.issuerLogo || '',
+        timestamp: item.createdAt ? new Date(item.createdAt).toLocaleString('vi-VN') : item.issueDate,
+      }));
+    }
+    return [];
   } catch (err) {
-    console.warn('[API Fallback] Trả về danh sách rỗng hoặc cache...');
+    console.warn('[API Fallback] Chưa kết nối được MySQL API, sử dụng dữ liệu fallback...');
     return [];
   }
 };
