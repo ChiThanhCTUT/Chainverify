@@ -3,13 +3,32 @@ import { useNavigate } from 'react-router-dom';
 import { Search, Wallet, Shield, Eye, Timer } from 'lucide-react';
 import { HERO_PHONE_IMAGE } from '../data';
 
+import { useAuth } from '../context/AuthContext';
+
 interface HomeProps {
-  isConnected: boolean;
-  onConnectWallet: () => void;
+  isConnected?: boolean;
+  onConnectWallet?: () => void;
 }
 
-export default function Home({ isConnected, onConnectWallet }: HomeProps) {
+export default function Home({ isConnected: propIsConnected, onConnectWallet: propOnConnectWallet }: HomeProps = {}) {
   const navigate = useNavigate();
+  const { isConnected: authIsConnected, connectWallet: authConnectWallet, userRole } = useAuth();
+
+  const isConnected = propIsConnected ?? authIsConnected;
+  const onConnectWallet = propOnConnectWallet ?? authConnectWallet;
+
+  const handlePortalClick = () => {
+    if (!isConnected) {
+      if (onConnectWallet) onConnectWallet();
+      else navigate('/login');
+    } else if (userRole === 'admin') {
+      navigate('/admin');
+    } else if (userRole === 'student') {
+      navigate('/student');
+    } else {
+      navigate('/login');
+    }
+  };
 
   return (
     <div className="w-full animate-fadeIn">
@@ -30,7 +49,7 @@ export default function Home({ isConnected, onConnectWallet }: HomeProps) {
             Xác minh Chứng chỉ
           </button>
           <button
-            onClick={isConnected ? () => navigate('/admin') : onConnectWallet}
+            onClick={handlePortalClick}
             className={`px-8 py-3.5 rounded font-sans text-base font-semibold transition-all duration-200 flex items-center justify-center gap-2 border cursor-pointer active:scale-[0.98] ${
               isConnected
                 ? 'bg-[#d0e1fb] text-[#001e40] border-[#a7c8ff]'
@@ -38,7 +57,13 @@ export default function Home({ isConnected, onConnectWallet }: HomeProps) {
             }`}
           >
             <Wallet className="w-5 h-5 stroke-[2]" />
-            {isConnected ? 'Vào Cổng Quản Trị' : 'Kết nối Ví MetaMask'}
+            {isConnected
+              ? userRole === 'admin'
+                ? 'Vào Cổng Quản Trị'
+                : userRole === 'student'
+                ? 'Vào Cổng Sinh Viên'
+                : 'Cổng Xác Thực Web3'
+              : 'Kết nối Ví MetaMask'}
           </button>
         </div>
       </section>

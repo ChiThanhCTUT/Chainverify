@@ -1,26 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-// Import các components tái sử dụng
+// Auth Provider & Protected Route
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Layout components
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import DemoControls from './components/DemoControls';
 
-// Import các trang chính từ src/pages/
+// Public / Guest Pages
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Verify from './pages/Verify';
-import StudentDashboard from './pages/StudentDashboard';
-import AdminDashboard from './pages/AdminDashboard';
+import About from './pages/About';
+import Contact from './pages/Contact';
 
-// Import custom hook & data ban đầu
-import { useWallet } from './hooks/useWallet';
+// Student Pages
+import StudentOverview from './pages/student/StudentOverview';
+import StudentCertificates from './pages/student/StudentCertificates';
+import StudentProfile from './pages/student/StudentProfile';
+
+// Admin Pages
+import AdminOverview from './pages/admin/AdminOverview';
+import AdminStudents from './pages/admin/AdminStudents';
+import AdminCertificates from './pages/admin/AdminCertificates';
+import AdminBlockchain from './pages/admin/AdminBlockchain';
+import AdminAuditLogs from './pages/admin/AdminAuditLogs';
+import AdminSettings from './pages/admin/AdminSettings';
+
+// Types & Services
 import { Certificate } from './types';
-import { INITIAL_CERTIFICATES } from './data';
 import { getCertificatesFromBackend } from './services/api';
 
 export default function App() {
-  const { account, isConnected, connectWallet, error } = useWallet();
   const [certificates, setCertificates] = useState<Certificate[]>([]);
 
   // Khởi tạo và đồng bộ dữ liệu chứng chỉ 100% từ MySQL Database (Backend API port 5000)
@@ -33,7 +46,6 @@ export default function App() {
     });
   }, []);
 
-  // Hàm lưu và cập nhật trạng thái văn bằng (chia sẻ cho cả nhóm)
   const saveCertificates = (updatedCerts: Certificate[]) => {
     setCertificates(updatedCerts);
     localStorage.setItem('chainverify_certs', JSON.stringify(updatedCerts));
@@ -45,80 +57,111 @@ export default function App() {
   };
 
   return (
-    <Router>
-      <div className="min-h-screen bg-[#f9f9fe] text-[#1a1c1f] font-sans flex flex-col antialiased">
-        {/* Thanh điều khiển router cho nhóm test nhanh */}
-        <DemoControls />
+    <AuthProvider>
+      <Router>
+        <div className="min-h-screen bg-[#f9f9fe] text-[#1a1c1f] font-sans flex flex-col antialiased">
+          {/* Main Production Navigation */}
+          <Navbar />
 
-        {/* Thanh điều hướng chính */}
-        <Navbar
-          isConnected={isConnected}
-          account={account}
-          onConnectWallet={connectWallet}
-        />
+          {/* Application Routes */}
+          <main className="flex-grow w-full max-w-7xl mx-auto px-4 md:px-10 py-8 md:py-12">
+            <Routes>
+              {/* Guest / Public Routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/verify" element={<Verify certificates={certificates} />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
 
-        {/* Cấu hình Định tuyến React Router chuẩn theo thiết kế */}
-        <main className="flex-grow w-full max-w-7xl mx-auto px-4 md:px-10 py-10 md:py-16">
-          <Routes>
-            {/* Route / : Trang chủ giới thiệu */}
-            <Route
-              path="/"
-              element={
-                <Home
-                  isConnected={isConnected}
-                  onConnectWallet={connectWallet}
-                />
-              }
-            />
+              {/* Protected Student Routes */}
+              <Route
+                path="/student"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <StudentOverview certificates={certificates} />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/student/certificates"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <StudentCertificates certificates={certificates} />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/student/profile"
+                element={
+                  <ProtectedRoute allowedRoles={['student']}>
+                    <StudentProfile certificates={certificates} />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Route /login : Trang kết nối ví MetaMask */}
-            <Route
-              path="/login"
-              element={
-                <Login
-                  isConnected={isConnected}
-                  account={account}
-                  onConnectWallet={connectWallet}
-                  error={error}
-                />
-              }
-            />
+              {/* Protected Admin Routes */}
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminOverview certificates={certificates} />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/students"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminStudents />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/certificates"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminCertificates
+                      certificates={certificates}
+                      onAddCertificate={handleAddCertificate}
+                      onUpdateCertificates={saveCertificates}
+                    />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/blockchain"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminBlockchain />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/audit-logs"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminAuditLogs />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/settings"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <AdminSettings />
+                  </ProtectedRoute>
+                }
+              />
 
-            {/* Route /verify : Trang tra cứu & xác minh văn bằng */}
-            <Route
-              path="/verify"
-              element={<Verify certificates={certificates} />}
-            />
+              {/* Fallback for invalid paths */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
 
-            {/* Route /student : Cổng Sinh viên & tải chứng chỉ */}
-            <Route
-              path="/student"
-              element={<StudentDashboard certificates={certificates} />}
-            />
-
-            {/* Route /admin : Cổng Quản trị viên & cấp phát */}
-            <Route
-              path="/admin"
-              element={
-                <AdminDashboard
-                  certificates={certificates}
-                  onAddCertificate={handleAddCertificate}
-                  onUpdateCertificates={saveCertificates}
-                />
-              }
-            />
-
-            {/* Route /dashboard : Bí danh chuyển tới /admin */}
-            <Route path="/dashboard" element={<Navigate to="/admin" replace />} />
-
-            {/* Route fallback cho các đường dẫn không hợp lệ */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
-
-        {/* Chân trang chung */}
-        <Footer />
-      </div>
-    </Router>
+          {/* Footer */}
+          <Footer />
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
