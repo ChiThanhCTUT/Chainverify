@@ -79,6 +79,8 @@ export function useWallet() {
             setError('Mạng Sepolia chưa được thêm vào MetaMask. Vui lòng thêm Sepolia thủ công.');
           } else if (switchErr?.code === 4001) {
             setError('Bạn đã từ chối yêu cầu chuyển mạng sang Sepolia.');
+          } else if (switchErr?.code === -32002 || switchErr?.message?.includes('-32002') || switchErr?.message?.includes('already pending')) {
+            setError('Đã có cửa sổ MetaMask đang chờ xử lý! Vui lòng nhấp vào biểu tượng con cáo ở góc trên trình duyệt để mở khóa hoặc xác nhận.');
           } else {
             setError('Vui lòng chuyển MetaMask sang mạng Sepolia.');
           }
@@ -98,6 +100,8 @@ export function useWallet() {
     } catch (err: any) {
       if (err?.code === 4001) {
         setError('Người dùng từ chối kết nối với MetaMask.');
+      } else if (err?.code === -32002 || err?.message?.includes('-32002') || err?.message?.includes('already pending')) {
+        setError('Đã có cửa sổ MetaMask đang chờ xử lý! Vui lòng nhấp vào biểu tượng con cáo ở góc trên trình duyệt hoặc mở cửa sổ MetaMask đang ẩn để mở khóa/xác nhận.');
       } else {
         setError('Không thể kết nối với MetaMask.');
       }
