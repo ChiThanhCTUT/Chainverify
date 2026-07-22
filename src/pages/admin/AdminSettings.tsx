@@ -4,8 +4,8 @@ import { CONTRACT_ADDRESS } from '../../contracts/config';
 
 export default function AdminSettings() {
   const [saved, setSaved] = useState(false);
-  const [institutionName, setInstitutionName] = useState('Trường Đại học Stitch (Stitch University)');
-  const [institutionCode, setInstitutionCode] = useState('STITCH-EDU-VN');
+  const [institutionName, setInstitutionName] = useState('Trường Đại học Kĩ thuật - Công nghệ Cần Thơ (Can Tho University of Technology)');
+  const [institutionCode, setInstitutionCode] = useState('CTUT-EDU-VN');
   const [issuerWallet, setIssuerWallet] = useState(CONTRACT_ADDRESS || '0x54ce6bc13beeaedec4cbb5558133efb1c0bf33e8');
   const [apiEndpoint, setApiEndpoint] = useState(import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api');
 
