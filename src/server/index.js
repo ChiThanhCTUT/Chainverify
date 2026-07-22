@@ -27,11 +27,12 @@ app.use('/api/certificates', certificateRoutes);
 // Port
 const PORT = process.env.PORT || 5000;
 
-sequelize.sync().then(() => {
-  console.log('Database synced successfully');
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  
+  sequelize.sync().then(() => {
+    console.log('Database synced successfully');
+  }).catch(err => {
+    console.error('Failed to sync db: ' + err.message);
   });
-}).catch(err => {
-  console.error('Failed to sync db: ' + err.message);
 });
