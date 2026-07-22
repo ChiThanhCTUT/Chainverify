@@ -7,7 +7,7 @@ export default function AdminSettings() {
   const [institutionName, setInstitutionName] = useState('Trường Đại học Stitch (Stitch University)');
   const [institutionCode, setInstitutionCode] = useState('STITCH-EDU-VN');
   const [issuerWallet, setIssuerWallet] = useState(CONTRACT_ADDRESS || '0x54ce6bc13beeaedec4cbb5558133efb1c0bf33e8');
-  const [apiEndpoint, setApiEndpoint] = useState('http://localhost:5000/api');
+  const [apiEndpoint, setApiEndpoint] = useState(import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api');
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
