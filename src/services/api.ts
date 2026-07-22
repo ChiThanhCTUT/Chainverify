@@ -79,30 +79,30 @@ export const getAdminStatistics = async (): Promise<AdminStatsResponse> => {
     const res: any = await api.get('/certificates/admin/statistics');
     const payload = res?.data || res;
     return {
-      totalIssued: payload.totalIssued || 12,
-      totalVerified: payload.totalVerified || 1452,
-      activeStudents: payload.activeStudents || 85,
-      revokedCount: payload.revokedCount || 1,
+      totalIssued: payload.totalIssued ?? 0,
+      totalVerified: payload.totalVerified ?? 0,
+      activeStudents: payload.activeStudents ?? 0,
+      revokedCount: payload.revokedCount ?? 0,
     };
   } catch (err) {
-    console.warn('[API Fallback] Trả dữ liệu thống kê mẫu cho Dashboard...');
+    console.error('[API Error] Không lấy được thống kê từ CSDL, hiển thị 0...');
     return {
-      totalIssued: 12,
-      totalVerified: 1452,
-      activeStudents: 85,
-      revokedCount: 1,
+      totalIssued: 0,
+      totalVerified: 0,
+      activeStudents: 0,
+      revokedCount: 0,
     };
   }
 };
 
 // ==========================================
-// [BIN TODO 3]: API Lấy danh sách chứng chỉ (từ MySQL của BIN hoặc phối hợp on-chain)
+// [BIN TODO 3]: API Lấy danh sách chứng chỉ (100% từ MySQL)
 // ==========================================
 export const getCertificatesFromBackend = async (): Promise<Certificate[]> => {
   try {
     const res: any = await api.get('/certificates');
     const list = res?.data || (Array.isArray(res) ? res : []);
-    if (Array.isArray(list) && list.length > 0) {
+    if (Array.isArray(list)) {
       return list.map((item: any) => ({
         id: item.id,
         recipientName: item.recipientName,
@@ -111,14 +111,14 @@ export const getCertificatesFromBackend = async (): Promise<Certificate[]> => {
         status: item.status || 'Pending',
         txHash: item.txHash || '',
         checksum: item.checksum || '',
-        issuerName: item.issuerName || 'Trường Đại học Cần Thơ (CTU)',
+        issuerName: item.issuerName || '',
         issuerLogo: item.issuerLogo || '',
         timestamp: item.createdAt ? new Date(item.createdAt).toLocaleString('vi-VN') : item.issueDate,
       }));
     }
     return [];
   } catch (err) {
-    console.warn('[API Fallback] Chưa kết nối được MySQL API, sử dụng dữ liệu fallback...');
+    console.error('[API Error] Không kết nối được MySQL API, trả về danh sách trống...');
     return [];
   }
 };

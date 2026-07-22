@@ -23,22 +23,12 @@ export default function App() {
   const { account, isConnected, connectWallet, error } = useWallet();
   const [certificates, setCertificates] = useState<Certificate[]>([]);
 
-  // Khởi tạo và đồng bộ dữ liệu chứng chỉ từ MySQL Database (Backend API port 5000)
+  // Khởi tạo và đồng bộ dữ liệu chứng chỉ 100% từ MySQL Database (Backend API port 5000)
   useEffect(() => {
     getCertificatesFromBackend().then((apiCerts) => {
+      setCertificates(apiCerts || []);
       if (apiCerts && apiCerts.length > 0) {
-        setCertificates(apiCerts);
-      } else {
-        const cached = localStorage.getItem('chainverify_certs');
-        if (cached) {
-          try {
-            setCertificates(JSON.parse(cached));
-          } catch (e) {
-            setCertificates(INITIAL_CERTIFICATES);
-          }
-        } else {
-          setCertificates(INITIAL_CERTIFICATES);
-        }
+        localStorage.setItem('chainverify_certs', JSON.stringify(apiCerts));
       }
     });
   }, []);
