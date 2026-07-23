@@ -32,7 +32,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   
-  sequelize.sync().then(() => {
+  sequelize.sync({ alter: true }).then(() => {
     console.log('Database synced successfully (Strict real database mode - No hardcoded seed data)');
   }).catch(err => {
     console.error('Failed to sync db: ' + err.message);

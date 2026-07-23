@@ -36,7 +36,7 @@ const Certificate = sequelize.define('Certificate', {
     allowNull: true
   },
   issuerLogo: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: true
   }
 }, {
