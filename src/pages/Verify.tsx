@@ -69,17 +69,33 @@ export default function Verify({ certificates }: VerifyProps) {
 
     try {
       // 1. Kiểm tra trong danh sách bộ nhớ tạm/state hiện tại
-      const found = certificates.find(
+      let found = certificates.find(
         (c) =>
           c.id.toLowerCase() === trimmed.toLowerCase() ||
           c.checksum.toLowerCase() === trimmed.toLowerCase() ||
           c.txHash.toLowerCase() === trimmed.toLowerCase()
       );
 
+      // 2. Nếu không có trong state, có thể component vừa mount và state chưa kịp tải. Ta thử gọi trực tiếp Backend MySQL!
+      if (!found) {
+        try {
+          const { getCertificatesFromBackend } = await import('../services/api');
+          const latestCerts = await getCertificatesFromBackend();
+          found = latestCerts.find(
+            (c) =>
+              c.id.toLowerCase() === trimmed.toLowerCase() ||
+              c.checksum.toLowerCase() === trimmed.toLowerCase() ||
+              c.txHash.toLowerCase() === trimmed.toLowerCase()
+          );
+        } catch (e) {
+          console.error('[Verify] Lỗi tra cứu trực tiếp từ Backend:', e);
+        }
+      }
+
       if (found) {
         setVerifiedCert(found);
       } else {
-        // 2. Thử tra cứu trên mạng lưới Blockchain (Module 14 / 18 - blockchainService)
+        // 3. Cuối cùng, thử tra cứu trên mạng lưới Blockchain (Module 14 / 18 - blockchainService)
         const onChainCert = await verifyCertificateOnChain(trimmed);
         if (onChainCert) {
           setVerifiedCert({
@@ -144,10 +160,23 @@ export default function Verify({ certificates }: VerifyProps) {
       const realSha256 = await calculateFileSHA256(file);
       setCalculatedFileHash(realSha256);
 
-      // Đối chiếu mã băm thực tế vừa tính toán với danh sách hoặc on-chain
-      const match = certificates.find(
+      // Đối chiếu mã băm thực tế vừa tính toán với danh sách hiện tại
+      let match = certificates.find(
         (c) => c.checksum.toLowerCase() === realSha256.toLowerCase()
       );
+
+      // Nếu chưa load kịp, thử tải danh sách mới nhất từ Backend
+      if (!match) {
+        try {
+          const { getCertificatesFromBackend } = await import('../services/api');
+          const latestCerts = await getCertificatesFromBackend();
+          match = latestCerts.find(
+            (c) => c.checksum.toLowerCase() === realSha256.toLowerCase()
+          );
+        } catch (e) {
+          console.error('[Verify] Lỗi tra cứu tệp trực tiếp từ Backend:', e);
+        }
+      }
 
       if (match) {
         setVerifiedCert(match);
@@ -157,7 +186,7 @@ export default function Verify({ certificates }: VerifyProps) {
         if (onChainMatch) {
           setVerifiedCert({
             id: onChainMatch.certId,
-            recipientName: onChainChainMatch(onChainMatch),
+            recipientName: onChainMatch.recipientName,
             courseProgram: onChainMatch.courseProgram,
             issueDate: onChainMatch.issueDate,
             status: onChainMatch.isValid ? 'Valid' : 'Revoked',
