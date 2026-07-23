@@ -122,5 +122,36 @@ export const getCertificatesFromBackend = async (): Promise<Certificate[]> => {
     return [];
   }
 };
+export const createCertificateInBackend = async (cert: Certificate): Promise<boolean> => {
+  try {
+    // MySQL backend expects dates in standard formats. We will just pass strings.
+    const payload = {
+      id: cert.id,
+      recipientName: cert.recipientName,
+      courseProgram: cert.courseProgram,
+      issueDate: new Date().toISOString(), // Standard SQL date format compatibility
+      status: cert.status,
+      txHash: cert.txHash,
+      checksum: cert.checksum,
+      issuerName: cert.issuerName,
+      issuerLogo: cert.issuerLogo
+    };
+    await api.post('/certificates', payload);
+    return true;
+  } catch (err) {
+    console.error('[API Error] Không thể lưu văn bằng vào MySQL Backend:', err);
+    return false;
+  }
+};
+
+export const updateCertificateStatusInBackend = async (certId: string, status: string): Promise<boolean> => {
+  try {
+    await api.put(`/certificates/${certId}`, { status });
+    return true;
+  } catch (err) {
+    console.error('[API Error] Không thể cập nhật trạng thái trên MySQL Backend:', err);
+    return false;
+  }
+};
 
 export default api;

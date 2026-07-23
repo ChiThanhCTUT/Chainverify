@@ -17,7 +17,7 @@ import { STITCH_UNIVERSITY_LOGO } from '../../data';
 import { generateRandomChecksum } from '../../utils/crypto';
 import CertificateCard from '../../components/CertificateCard';
 import Table, { Column } from '../../components/Table';
-import { uploadCertificatePDF } from '../../services/api';
+import { uploadCertificatePDF, createCertificateInBackend, updateCertificateStatusInBackend } from '../../services/api';
 import { issueCertificateOnChain } from '../../services/blockchainService';
 
 interface AdminCertificatesProps {
@@ -44,18 +44,20 @@ export default function AdminCertificates({
   const [selectedPDF, setSelectedPDF] = useState<File | null>(null);
   const [isIssuing, setIsIssuing] = useState(false);
   const [issueSuccessMsg, setIssueSuccessMsg] = useState('');
+  const [issueErrorMsg, setIssueErrorMsg] = useState('');
 
   const handleIssueCertificate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!studentId || !studentName) return;
 
     if (!CONTRACT_ADDRESS || CONTRACT_ADDRESS === '0x1234567890abcdef1234567890abcdef12345678') {
-      setIssueSuccessMsg('CONTRACT_ADDRESS chưa được cấu hình. Vui lòng deploy Smart Contract trước khi ký.');
+      setIssueErrorMsg('CONTRACT_ADDRESS chưa được cấu hình. Vui lòng deploy Smart Contract trước khi ký.');
       return;
     }
 
     setIsIssuing(true);
     setIssueSuccessMsg('');
+    setIssueErrorMsg('');
 
     try {
       let checksum = generateRandomChecksum();
@@ -79,6 +81,9 @@ export default function AdminCertificates({
         timestamp: new Date().toUTCString(),
       };
 
+      // Đồng bộ lưu chứng chỉ xuống Backend MySQL
+      await createCertificateInBackend(newCert);
+
       onAddCertificate(newCert);
       setIssueSuccessMsg(`Đã cấp phát thành công cho sinh viên ${studentName} trên Blockchain!`);
       setStudentId('');
@@ -87,16 +92,21 @@ export default function AdminCertificates({
       setTimeout(() => {
         setShowIssueModal(false);
         setIssueSuccessMsg('');
+        setIssueErrorMsg('');
       }, 2500);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Lỗi cấp phát:', err);
+      setIssueErrorMsg(err.message || 'Đã xảy ra lỗi khi ban hành văn bằng.');
     } finally {
       setIsIssuing(false);
     }
   };
 
-  const handleRevoke = (certId: string) => {
+  const handleRevoke = async (certId: string) => {
     if (window.confirm(`Bạn có chắc chắn muốn thu hồi văn bằng với mã ${certId} trên mạng lưới?`)) {
+      // Cập nhật trạng thái xuống Backend MySQL
+      await updateCertificateStatusInBackend(certId, 'Revoked');
+      
       const updated = certificates.map((c) => (c.id === certId ? { ...c, status: 'Revoked' as const } : c));
       onUpdateCertificates(updated);
     }
@@ -341,6 +351,13 @@ export default function AdminCertificates({
               <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-800 text-xs font-semibold mb-6 flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
                 <span>{issueSuccessMsg}</span>
+              </div>
+            )}
+
+            {issueErrorMsg && (
+              <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-red-800 text-xs font-semibold mb-6 flex items-center gap-2">
+                <Ban className="w-5 h-5 text-red-600 shrink-0" />
+                <span>{issueErrorMsg}</span>
               </div>
             )}
 
