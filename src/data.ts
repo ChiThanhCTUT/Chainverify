@@ -15,7 +15,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     status: 'Valid',
     txHash: '0x8f2a64c9e4b7a1d3f5e8c2a9b6d4f1e7c3a5b8d2f0e4a6c9b7d5f3e1a8c2b4d6f9',
     checksum: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-    issuerName: 'Trường Đại học Stitch',
+    issuerName: 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
     issuerLogo: STITCH_UNIVERSITY_LOGO,
     timestamp: '24 thg 10, 2023 14:32:01 UTC'
   },
@@ -27,7 +27,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     status: 'Valid',
     txHash: '0x8f3cb2e4d5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2',
     checksum: 'a5712eef43167bde500c9e68c1996f0117ae41e4649b934ca495991b7852ba71',
-    issuerName: 'Trường Đại học Stitch',
+    issuerName: 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
     issuerLogo: STITCH_UNIVERSITY_LOGO,
     timestamp: '24 thg 10, 2024 09:15:00 UTC'
   },
@@ -39,7 +39,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     status: 'Valid',
     txHash: '0x7e2db1c4a5f6e7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1bc',
     checksum: 'b6223eef43167bde500c9e68c1996f0117ae41e4649b934ca495991b7852bc34',
-    issuerName: 'Trường Đại học Stitch',
+    issuerName: 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
     issuerLogo: STITCH_UNIVERSITY_LOGO,
     timestamp: '23 thg 10, 2024 11:30:22 UTC'
   },
@@ -51,7 +51,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     status: 'Valid',
     txHash: '0x6d1cb0b4a5f6e7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1de',
     checksum: 'c7334eef43167bde500c9e68c1996f0117ae41e4649b934ca495991b7852bd56',
-    issuerName: 'Trường Đại học Stitch',
+    issuerName: 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
     issuerLogo: STITCH_UNIVERSITY_LOGO,
     timestamp: '22 thg 10, 2024 16:45:10 UTC'
   },
@@ -63,7 +63,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     status: 'Valid',
     txHash: '0x5c0ab9a4a5f6e7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1ef',
     checksum: 'd8445eef43167bde500c9e68c1996f0117ae41e4649b934ca495991b7852be78',
-    issuerName: 'Trường Đại học Stitch',
+    issuerName: 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
     issuerLogo: STITCH_UNIVERSITY_LOGO,
     timestamp: '21 thg 10, 2024 10:05:33 UTC'
   },
@@ -75,7 +75,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     status: 'Valid',
     txHash: '0x4b9fa8a4a5f6e7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1f0',
     checksum: 'e9556eef43167bde500c9e68c1996f0117ae41e4649b934ca495991b7852bf89',
-    issuerName: 'Trường Đại học Stitch',
+    issuerName: 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
     issuerLogo: STITCH_UNIVERSITY_LOGO,
     timestamp: '20 thg 10, 2024 14:20:15 UTC'
   },
@@ -87,7 +87,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     status: 'Valid',
     txHash: '0x8f3cb2e4d5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2',
     checksum: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
-    issuerName: 'Trường Đại học Stitch',
+    issuerName: 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
     issuerLogo: STITCH_UNIVERSITY_LOGO,
     timestamp: '15 thg 5, 2024 15:00:00 UTC'
   },
@@ -99,7 +99,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     status: 'Valid',
     txHash: '0x9c3ab2e4d5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1c3',
     checksum: 'f4b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b866',
-    issuerName: 'Trường Đại học Stitch',
+    issuerName: 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
     issuerLogo: STITCH_UNIVERSITY_LOGO,
     timestamp: '10 thg 12, 2023 11:22:15 UTC'
   },
@@ -111,7 +111,7 @@ export const INITIAL_CERTIFICATES: Certificate[] = [
     status: 'Valid',
     txHash: '0xad3cb2e4d5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1d4',
     checksum: '05c0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b877',
-    issuerName: 'Trường Đại học Stitch',
+    issuerName: 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
     issuerLogo: STITCH_UNIVERSITY_LOGO,
     timestamp: '22 thg 8, 2023 16:11:45 UTC'
   }

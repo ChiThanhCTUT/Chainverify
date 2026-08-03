@@ -76,7 +76,7 @@ export default function AdminCertificates({
         status: 'Valid',
         txHash: txHash,
         checksum: checksum,
-        issuerName: 'Trường Đại học Stitch',
+        issuerName: 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
         issuerLogo: STITCH_UNIVERSITY_LOGO,
         timestamp: new Date().toUTCString(),
       };

@@ -187,7 +187,7 @@ export const verifyCertificateOnChain = async (idOrChecksum: string): Promise<On
       issueDate: found.issueDate,
       checksum: found.checksum,
       isValid: found.status === 'Valid',
-      issuer: found.issuerName || 'Trường Đại học Stitch (Blockchain Sepolia)',
+      issuer: found.issuerName || 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ (Blockchain Sepolia)',
       txHash: found.txHash,
     };
   }

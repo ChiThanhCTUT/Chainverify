@@ -33,7 +33,7 @@ export default function AdminOverview({ certificates }: AdminOverviewProps) {
             <h1 className="font-serif text-2xl md:text-3xl font-bold">TS. Eleanor Vance</h1>
             <p className="font-sans text-xs text-gray-300 mt-1 flex items-center justify-center sm:justify-start gap-1.5">
               <School className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Phòng Đào tạo & Quản lý Văn bằng - Trường Đại học Stitch</span>
+              <span>Phòng Đào tạo & Quản lý Văn bằng - Trường Đại học Kĩ thuật - Công nghệ Cần Thơ</span>
             </p>
           </div>
         </div>

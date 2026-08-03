@@ -116,7 +116,7 @@ export default function StudentDashboard({ certificates }: StudentDashboardProps
             </div>
             <p className="font-sans text-sm text-[#505f76] flex items-center justify-center md:justify-start gap-1.5 mb-4">
               <School className="w-4 h-4 text-[#001e40]" />
-              <span>Khoa Khoa học Máy tính & Kỹ thuật - Trường Đại học Stitch</span>
+              <span>Khoa Khoa học Máy tính & Kỹ thuật - Trường Đại học Kĩ thuật - Công nghệ Cần Thơ</span>
             </p>
             <div className="flex flex-wrap gap-4 justify-center md:justify-start text-xs text-[#505f76]">
               <span className="bg-[#f4f3f8] px-3 py-1.5 rounded border border-[#e0e2ec]">

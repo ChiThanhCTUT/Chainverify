@@ -49,7 +49,7 @@ export default function StudentProfile({ certificates }: StudentProfileProps) {
 
           <p className="font-sans text-sm text-[#505f76] flex items-center justify-center sm:justify-start gap-2">
             <School className="w-4 h-4 text-[#001e40]" />
-            <span>Khoa Khoa học Máy tính & Mật mã - Trường Đại học Stitch</span>
+            <span>Khoa Khoa học Máy tính & Mật mã - Trường Đại học Kĩ thuật - Công nghệ Cần Thơ</span>
           </p>
 
           <div className="pt-3 border-t border-[#f0f1f5] flex flex-wrap justify-center sm:justify-start gap-4 text-xs font-sans">

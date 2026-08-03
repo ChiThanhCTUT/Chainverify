@@ -106,7 +106,7 @@ export default function Verify({ certificates }: VerifyProps) {
             status: onChainCert.isValid ? 'Valid' : 'Revoked',
             txHash: onChainCert.txHash || 'On-chain Smart Contract',
             checksum: onChainCert.checksum,
-            issuerName: onChainCert.issuer || 'Trường Đại học Stitch',
+            issuerName: onChainCert.issuer || 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
             issuerLogo: STITCH_UNIVERSITY_LOGO,
             timestamp: new Date().toUTCString(),
           });
@@ -192,7 +192,7 @@ export default function Verify({ certificates }: VerifyProps) {
             status: onChainMatch.isValid ? 'Valid' : 'Revoked',
             txHash: onChainMatch.txHash || 'On-chain Smart Contract',
             checksum: onChainMatch.checksum,
-            issuerName: onChainMatch.issuer || 'Trường Đại học Stitch',
+            issuerName: onChainMatch.issuer || 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
             issuerLogo: STITCH_UNIVERSITY_LOGO,
             timestamp: new Date().toUTCString(),
           });

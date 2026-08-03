@@ -94,7 +94,7 @@ export default function AdminDashboard({
         status: 'Valid',
         txHash: txHash,
         checksum: checksum,
-        issuerName: 'Trường Đại học Stitch',
+        issuerName: 'Trường Đại học Kĩ thuật - Công nghệ Cần Thơ',
         issuerLogo: STITCH_UNIVERSITY_LOGO,
         timestamp: new Date().toUTCString(),
       };
@@ -234,7 +234,7 @@ export default function AdminDashboard({
             </div>
             <p className="font-sans text-xs text-[#505f76] flex items-center gap-1.5 mt-0.5">
               <School className="w-3.5 h-3.5 text-[#001e40]" />
-              <span>Phòng Đào tạo - Trường Đại học Stitch</span>
+              <span>Phòng Đào tạo - Trường Đại học Kĩ thuật - Công nghệ Cần Thơ</span>
             </p>
           </div>
         </div>
